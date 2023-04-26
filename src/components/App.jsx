@@ -3,6 +3,7 @@ import { Container } from './AppStyled';
 import { ContactForm } from './ContactForm/ContactForm';
 import { ContactList } from './ContactList/ContactList';
 import { Filter } from './FilterContacts';
+import { nanoid } from 'nanoid';
 
 export const App = () => {
   const [contacts, setContacts] = useState(
@@ -14,11 +15,28 @@ export const App = () => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const formSubmitHandler = data => {
-    contacts.find(({ name }) => name.toLowerCase() === data.name.toLowerCase())
-      ? alert(`${data.name} is already in contacts`)
-      : setContacts(prevState => [data, ...prevState]);
+  const formSubmitHandler = data=> { 
+    
+    const existingContact = contacts.find(
+      ({ name }) => name.toLowerCase() === data.name.toLowerCase()
+    );
+    if (existingContact) {
+      alert(`${data.name} is already in contacts`);
+      return;
+    }
+    const newContact = {
+      ...data,
+      id: nanoid(),
+    };
+    setContacts(prevState => [newContact, ...prevState]);
+    
   };
+
+  // const formSubmitHandler = data => {
+  //   contacts.find(({ name }) => name.toLowerCase() === data.name.toLowerCase())
+  //     ? alert(`${data.name} is already in contacts`)
+  //     : setContacts(prevState => [data, ...prevState]);
+  // };
 
   const getFiltredContacts = () => {
     const normalizedFilter = filter.toLowerCase();
